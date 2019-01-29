@@ -32,25 +32,27 @@ character_freq = {
 }
 
 hex = '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736'
+# hex = '0e3647e8592d35514a081243582536ed3de6734059001e3f535ce6271032'
 
-def _evaluate(plaintext):
+def _evaluate(plaintext: str) -> float:
   # plaintext should be a regular Python string
-  score = 0
+  score = 0.0
   for letter in plaintext:
     if letter.upper() in character_freq:
       score += character_freq[letter.upper()]
   return score
 
-def decode_cipher(hex, limit=5):
+ScorePlaintext = namedtuple('ScorePlaintext', ['score', 'plaintext', 'key'])
+
+def decode_cipher(h: str, limit=5) -> [ScorePlaintext]:
   # decodes single-byte XOR cipher against English alphabet
   # evaluates each result and sorts them by character frequency score
   # YOU should decide which one is probably the key
   scores = {}
-  score_plaintext = namedtuple('ScorePlaintext', ['score', 'plaintext', 'key'])
   for letter in character_freq:
-    cipherkey = codecs.encode(bytes(letter, 'utf-8') * (len(hex) // 2), 'hex').decode()
-    plaintext = codecs.decode(fixed_xor(hex, cipherkey), 'hex').decode()
-    scores[letter] = score_plaintext(_evaluate(plaintext), plaintext, letter)
+    cipherkey = codecs.encode(bytes(letter, 'utf-8') * (len(h) // 2), 'hex').decode()
+    plaintext = codecs.decode(fixed_xor(h, cipherkey), 'hex').decode('latin-1')
+    scores[letter] = ScorePlaintext(_evaluate(plaintext), plaintext, letter)
 
   max_score_plaintext = 0
   res = []

@@ -1,5 +1,4 @@
-mod fixed_xor;
-use fixed_xor::fixed_xor;
+use crate::fixed_xor;
 
 fn evaluate(_hexstr: String) -> f32 {
   1.0
@@ -8,11 +7,11 @@ fn evaluate(_hexstr: String) -> f32 {
 pub struct PlaintextScore {
   pub plaintext: String,
   pub score: f32,
-  pub key: char
+  pub key: i32,
 }
 
 impl PlaintextScore {
-  fn new(plaintext: String, score: f32, key: char) -> PlaintextScore {
+  fn new(plaintext: String, score: f32, key: i32) -> PlaintextScore {
     PlaintextScore {
       plaintext: plaintext,
       score: score,
@@ -29,13 +28,13 @@ pub fn single_xor_cipher(hexstr: &str) -> PlaintextScore {
     for _ in 0..size {
       key_extended.push(k as u8);
     }
-    let xor = fixed_xor(hex::encode(key_extended), hexstr);
+    let xor = fixed_xor(&hex::encode(key_extended)[..], hexstr);
     scores.push(PlaintextScore::new(xor, evaluate(xor), k));
   }
 
   return PlaintextScore {
     plaintext: hexstr.to_string(),
-    score: scores[0],
-    key: 'A',
+    score: scores[0].score,
+    key: 33,
   };
 }

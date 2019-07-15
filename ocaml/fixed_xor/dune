@@ -1,0 +1,3 @@
+(executable
+  (name fixed_xor)
+  (libraries base stdio))
